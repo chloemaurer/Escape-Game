@@ -1,0 +1,231 @@
+# Blender 4.4.3 MTL File: 'None'
+# www.blender.org
+
+newmtl Plant-01_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Bark.png
+
+newmtl Plant-01_002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf02.png
+map_d C:/leaf02_Opacity.png
+map_Bump -bm 1.000000 C:/leaf02_Normal.png
+
+newmtl Plant-01_006
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf02.png
+map_d C:/leaf02_Opacity.png
+map_Bump -bm 1.000000 C:/leaf02_Normal.png
+
+newmtl Plant-02_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaves01.png
+map_d C:/leaves01_Opacity.png
+map_Bump -bm 1.000000 C:/leaves01_Normal.png
+
+newmtl Plant-02_002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaves03.png
+map_d C:/leaves03_Opacity.png
+map_Bump -bm 1.000000 C:/leaves03_Normal.png
+
+newmtl Plant-02_003
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf02.png
+map_d C:/leaf02_Opacity.png
+map_Bump -bm 1.000000 C:/leaf02_Normal.png
+
+newmtl Plant-02_004
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Bark.png
+
+newmtl Plant-02_005
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaves0102.png
+map_d C:/leaves0102_Opacity.png
+map_Bump -bm 1.000000 C:/leaves0102_Normal.png
+
+newmtl Plant-02_006
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/Palm02.png
+map_d C:/Palm02_Opacity.png
+map_Bump -bm 1.000000 C:/Palm02_Normal.png
+
+newmtl Plant-03_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf10.png
+map_d C:/leaf10_Opacity.png
+
+newmtl Plant-04_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf08.png
+map_d C:/leaf08_Opacity.png
+
+newmtl Plant-04_002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Bark.png
+
+newmtl Plant-04_010
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Bark.png
+
+newmtl Plant-05_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/Fern.png
+map_d C:/Fern_Opacity.png
+
+newmtl Plant-06_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Bark.png
+
+newmtl Plant-06_002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf09.png
+map_d C:/leaf09_Opacity.png
+
+newmtl Plant-07_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Bark.png
+
+newmtl Plant-07_002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf02.png
+map_d C:/leaf02_Opacity.png
+map_Bump -bm 1.000000 C:/leaf02_Normal.png
+
+newmtl Plant-08_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Bark.png
+
+newmtl Plant-08_002
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/leaf02.png
+map_d C:/leaf02_Opacity.png
+map_Bump -bm 1.000000 C:/leaf02_Normal.png
+
+newmtl Plant-Tree-01_001
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/Tree_leaf02.png
+map_d C:/Tree_leaf02_Opacity.png
+
+newmtl wood
+Ns 151.038208
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
