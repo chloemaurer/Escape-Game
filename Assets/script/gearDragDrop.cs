@@ -1,43 +1,61 @@
-using UnityEngine;
-using UnityEngine.EventSystems;
+ï»¿using UnityEngine;
 
-public class DraggableGear : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class GearDrag : MonoBehaviour
 {
-    private Vector3 startPosition;
+    public int gearID = 0;
+
+    private Camera cam;
+    private Vector3 offset;
+    private float dist;
+    private Vector3 originalPos;
+    private Vector3 originalScale;
     private Transform originalParent;
-    private Canvas canvas;
 
-    [SerializeField] private int gearID; // Identifiant de l'engrenage
+    private bool dragging = false;
 
-    private void Awake()
+    void Start()
     {
-        canvas = FindObjectOfType<Canvas>();
-    }
-
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        startPosition = transform.position;
+        cam = Camera.main;
+        originalPos = transform.position;
         originalParent = transform.parent;
-        transform.SetParent(canvas.transform); // Pour que ça reste visible
+        originalScale = transform.localScale;
     }
 
-    public void OnDrag(PointerEventData eventData)
+    private void OnMouseDown()
     {
-        transform.position = Input.mousePosition;
+        originalPos = transform.position;
+        originalParent = transform.parent;
+
+        dist = Vector3.Distance(cam.transform.position, transform.position);
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist));
+        offset = transform.position - mouseWorld;
+
+        dragging = true;
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    private void OnMouseDrag()
     {
-        // Si aucun SnapPoint détecté, on revient à la position de départ
-        if (!SnapManager.Instance.TrySnapGear(this))
+        if (!dragging) return;
+
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist));
+        transform.position = mouseWorld + offset;
+        
+    }
+
+    private void OnMouseUp()
+    {
+        dragging = false;
+
+        // On demande le snap
+        bool snapped = SnapManager.Instance.TrySnap(this);
+
+        // Si snap ratÃ© â†’ reset
+        if (!snapped)
         {
-            transform.position = startPosition;
+            transform.position = originalPos;
             transform.SetParent(originalParent);
+            // Remet la taille Ã  l'original (1,1,1)
+            transform.localScale = originalScale;
         }
-    }
-
-    public int GetGearID()
-    {
-        return gearID;
     }
 }

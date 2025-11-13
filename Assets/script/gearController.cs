@@ -4,52 +4,44 @@ using UnityEngine;
 public class SnapManager : MonoBehaviour
 {
     public static SnapManager Instance;
-    private List<SnapPoint> snapPoints = new List<SnapPoint>();
+    public float snapDistance = 1f; // Ajuste selon la taille du niveau
+    private List<SnapPoint> points = new List<SnapPoint>();
 
     private void Awake()
     {
         Instance = this;
-        snapPoints.AddRange(FindObjectsOfType<SnapPoint>());
+        points.AddRange(FindObjectsOfType<SnapPoint>());
     }
 
-    public bool TrySnapGear(DraggableGear gear)
+    public bool TrySnap(GearDrag gear)
     {
-        foreach (var snap in snapPoints)
+        foreach (var p in points)
         {
-            if (snap.isOccupied) continue;
+            float dist = Vector3.Distance(gear.transform.position, p.transform.position);
 
-            float distance = Vector3.Distance(gear.transform.position, snap.transform.position);
-
-            // Si l'engrenage est proche du point de snap
-            if (distance < 80f) // Ajuste selon la taille de ton canvas
+            if (dist <= snapDistance)
             {
-                if (gear.GetGearID() == snap.requiredGearID)
+                if (gear.gearID == p.requiredGearID)
                 {
-                    gear.transform.position = snap.transform.position;
-                    gear.transform.SetParent(snap.transform);
-                    snap.isOccupied = true;
-                    CheckAllPlaced();
+                    // Snap réussi
+                    gear.transform.position = p.transform.position;
+                    gear.transform.rotation = p.transform.rotation;
+                    gear.transform.SetParent(p.transform);
+
+                    gear.transform.localScale = Vector3.one * 2; // double la taille
+
+                    // ⚡ On ne touche pas le scale ici
                     return true;
                 }
                 else
                 {
-                    // Mauvais engrenage
-                    Debug.Log("Mauvais engrenage !");
+                    // Mauvais ID → retour false
                     return false;
                 }
             }
         }
+
+        // Trop loin de tous les points
         return false;
-    }
-
-    private void CheckAllPlaced()
-    {
-        foreach (var snap in snapPoints)
-        {
-            if (!snap.isOccupied) return;
-        }
-
-        // Tous les points sont remplis
-        Debug.Log("✅ Tous les engrenages sont bien placés ! Niveau réussi !");
     }
 }
