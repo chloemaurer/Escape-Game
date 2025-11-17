@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 8665647201819011616}
   - component: {fileID: 4085658376179972000}
   m_Layer: 0
-  m_Name: engrenage3
+  m_Name: engrenage3 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
