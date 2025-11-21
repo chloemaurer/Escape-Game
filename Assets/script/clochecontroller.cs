@@ -1,47 +1,92 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class BellSoundController : MonoBehaviour
+public class ClocheController : MonoBehaviour
 {
-    public static BellSoundController Instance { get; private set; }
+    public static ClocheController Instance;
 
-    // List of logs to verify what was played
-    private List<string> soundLogs = new List<string>();
+    [Header("Parent contenant les 5 sets de feux")]
+    public Transform fireSetsParent;
+
+    private List<List<int>> sequences = new List<List<int>>()
+    {
+        new List<int>{1,3,5,1},
+        new List<int>{2,6,5,2},
+        new List<int>{3,5,4,3},
+        new List<int>{6,1,2,5},
+        new List<int>{6,4,2,3}
+    };
+
+    private int currentSequence = 0;
+    private int currentIndex = 0;
+
+    private Transform currentFireSet;
 
     private void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
-    // Called by each bell when it plays a sound
-    public void RegisterBellSound(string bellName, string soundName)
+    private void Start()
     {
-        string log = $"[{Time.time:F2}] Bell '{bellName}' played sound '{soundName}'";
-        soundLogs.Add(log);
-        Debug.Log(log);
+        ActivateCurrentFireSet();
     }
 
-    // Make logs accessible
-    public List<string> GetSoundLogs()
+    private void ActivateCurrentFireSet()
     {
-        return new List<string>(soundLogs);
+        // Désactiver tous les sets
+        for (int i = 0; i < fireSetsParent.childCount; i++)
+            fireSetsParent.GetChild(i).gameObject.SetActive(false);
+
+        // Activer seulement le set correspondant
+        currentFireSet = fireSetsParent.GetChild(currentSequence);
+        currentFireSet.gameObject.SetActive(true);
+
+        // Éteindre ses 4 feux
+        for (int i = 0; i < currentFireSet.childCount; i++)
+            currentFireSet.GetChild(i).gameObject.SetActive(false);
     }
 
-    // Optional: verify if a specific bell played the correct sound
-    public bool DidBellPlaySound(string bellName, string soundName)
+    public void RegisterNote(int bellID)
     {
-        foreach (var log in soundLogs)
+        List<int> seq = sequences[currentSequence];
+
+        // ✔ bonne note
+        if (bellID == seq[currentIndex])
         {
-            if (log.Contains($"Bell '{bellName}'") && log.Contains($"'{soundName}'"))
-                return true;
+            currentFireSet.GetChild(currentIndex).gameObject.SetActive(true);
+            currentIndex++;
+
+            // ✔ Séquence terminée
+            if (currentIndex >= seq.Count)
+            {
+                Debug.Log("Séquence " + (currentSequence + 1) + " réussie !");
+                currentSequence++;
+                currentIndex = 0;
+
+                // Terminé ?
+                if (currentSequence >= sequences.Count)
+                {
+                    Debug.Log("🎉 Toutes les séquences réussies !");
+                    return;
+                }
+
+                ActivateCurrentFireSet();
+            }
         }
-        return false;
+        else
+        {
+            Debug.Log("❌ Mauvaise note !");
+            ResetSequence();
+        }
+    }
+
+    private void ResetSequence()
+    {
+        currentIndex = 0;
+
+        // Éteindre les feux du set actuel
+        for (int i = 0; i < currentFireSet.childCount; i++)
+            currentFireSet.GetChild(i).gameObject.SetActive(false);
     }
 }

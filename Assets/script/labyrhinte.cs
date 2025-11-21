@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class LabyrintheLerp : MonoBehaviour
+public class labyrhinthe : MonoBehaviour
 {
     [SerializeField] private float rotationSpeed = 90f; // degré par seconde
     [SerializeField] private float lerpSmooth = 5f; // vitesse d'interpolation
