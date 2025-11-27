@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PorteInca3D : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class PorteSymbole2 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+
     [SerializeField] private float rotationSpeed = 25f; // ajustable dans l'inspecteur
     private Vector2 startPos;
     private bool isDragging = false;
@@ -12,15 +13,14 @@ public class PorteInca3D : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     private void Awake()
     {
-
+        Debug.Log("🚪 PorteInca3D initialisée.");
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        audioSource.clip = moveRockSound;
-        audioSource.Play();
+
         startPos = eventData.position;
         isDragging = true;
     }
@@ -29,8 +29,9 @@ public class PorteInca3D : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     {
 
         if (!isDragging) return;
-        
-        
+
+        audioSource.clip = moveRockSound;
+        audioSource.Play();
         float deltaX = eventData.position.x - startPos.x;
 
         // rotation autour de l'axe Z

@@ -4,10 +4,12 @@ using UnityEngine;
 public class ClocheController : MonoBehaviour
 {
     public static ClocheController Instance;
-
+    public AudioClip fireSound;
+    private AudioSource audioSource;
     [Header("Parent contenant les 5 sets de feux")]
     public Transform fireSetsParent;
 
+    // Séquences des cloches
     private List<List<int>> sequences = new List<List<int>>()
     {
         new List<int>{1,3,5,1},
@@ -22,71 +24,84 @@ public class ClocheController : MonoBehaviour
 
     private Transform currentFireSet;
 
+    
+
+
     private void Awake()
     {
         Instance = this;
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
     }
 
     private void Start()
     {
-        ActivateCurrentFireSet();
+        ShowFireSet(currentSequence);
     }
 
-    private void ActivateCurrentFireSet()
+    // Affiche le set de feux correspondant à la séquence actuelle
+    private void ShowFireSet(int index)
     {
-        // Désactiver tous les sets
         for (int i = 0; i < fireSetsParent.childCount; i++)
             fireSetsParent.GetChild(i).gameObject.SetActive(false);
 
-        // Activer seulement le set correspondant
-        currentFireSet = fireSetsParent.GetChild(currentSequence);
+        currentFireSet = fireSetsParent.GetChild(index);
         currentFireSet.gameObject.SetActive(true);
 
-        // Éteindre ses 4 feux
         for (int i = 0; i < currentFireSet.childCount; i++)
-            currentFireSet.GetChild(i).gameObject.SetActive(false);
+            currentFireSet.GetChild(i).gameObject.SetActive(true);
     }
 
+    // Méthode pour enregistrer la note tapée par le joueur
     public void RegisterNote(int bellID)
     {
+        if (currentSequence >= sequences.Count)
+        {
+            Debug.Log("Toutes les séquences ont déjà été réussies !");
+            return;
+        }
+
         List<int> seq = sequences[currentSequence];
 
-        // ✔ bonne note
         if (bellID == seq[currentIndex])
         {
-            currentFireSet.GetChild(currentIndex).gameObject.SetActive(true);
+            // Bonne note
             currentIndex++;
+            Debug.Log("✅ Note correcte ! Bell = " + bellID);
 
-            // ✔ Séquence terminée
             if (currentIndex >= seq.Count)
             {
-                Debug.Log("Séquence " + (currentSequence + 1) + " réussie !");
+                Debug.Log("🎉 Séquence " + (currentSequence + 1) + " réussie !");
+
+                // Jouer le son de feu
+                audioSource.clip = fireSound;
+                audioSource.Play();
+
                 currentSequence++;
                 currentIndex = 0;
 
-                // Terminé ?
-                if (currentSequence >= sequences.Count)
-                {
-                    Debug.Log("🎉 Toutes les séquences réussies !");
-                    return;
-                }
-
-                ActivateCurrentFireSet();
+                if (currentSequence < sequences.Count)
+                    ShowFireSet(currentSequence);
+                else
+                    Debug.Log("🎊 Toutes les séquences terminées !");
             }
         }
         else
         {
-            Debug.Log("❌ Mauvaise note !");
-            ResetSequence();
+            // Mauvaise note
+            Debug.Log("❌ Mauvaise note ! Bell = " + bellID +
+                      " | Attendu = " + seq[currentIndex]);
+
+            // Reset de la séquence
+            currentIndex = 0;
+            ShowFireSet(currentSequence);
+
+            // Vérifie si la note tapée correspond au début de la séquence
+            if (bellID == seq[0])
+            {
+                currentIndex = 1;
+                Debug.Log("➡ La note tapée correspond au début de la séquence, reprise !");
+            }
         }
-    }
-
-    private void ResetSequence()
-    {
-        currentIndex = 0;
-
-        // Éteindre les feux du set actuel
-        for (int i = 0; i < currentFireSet.childCount; i++)
-            currentFireSet.GetChild(i).gameObject.SetActive(false);
     }
 }

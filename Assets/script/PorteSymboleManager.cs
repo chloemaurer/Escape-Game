@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Transactions;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PorteSymboleManager : MonoBehaviour
 {
@@ -6,11 +8,20 @@ public class PorteSymboleManager : MonoBehaviour
     public Transform partieExterieure;
     public Transform partieMilieu;
     public Transform partieCentre;
+    public AudioClip doorSound;
+    private AudioSource audioSource;
+    private Fleche transitionManager;
 
     [Header("Tolérance d’alignement (en degrés)")]
     [SerializeField] private float tolerance = 5f;
 
     private bool porteOuverte = false;
+
+    private void Awake()
+    {
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+    }
 
     public void CheckAlignment()
     {
@@ -25,6 +36,7 @@ public class PorteSymboleManager : MonoBehaviour
         {
             porteOuverte = true;
             Debug.Log("✅ Porte ouverte !");
+            
             OnPorteOuverte();
         }
         else
@@ -42,14 +54,9 @@ public class PorteSymboleManager : MonoBehaviour
 
     private void OnPorteOuverte()
     {
-        // 💥 Ici tu peux mettre ton effet d’ouverture :
-        // - Jouer une animation
-        // - Activer une porte qui s’ouvre
-        // - Changer de scène
-        // - Jouer un son
+        SceneManager.LoadScene("Escape Game");
+        audioSource.clip = doorSound;
+        audioSource.Play();
 
-        // Exemple :
-        // GetComponent<AudioSource>().Play();
-        // Animator.SetTrigger("Open");
     }
 }
