@@ -10,7 +10,8 @@ public class PorteSymboleManager : MonoBehaviour
     public Transform partieCentre;
     public AudioClip doorSound;
     private AudioSource audioSource;
-    private Fleche transitionManager;
+    private PorteSymboleAnimation1 porteAnimation;
+
 
     [Header("Tolérance d’alignement (en degrés)")]
     [SerializeField] private float tolerance = 5f;
@@ -21,6 +22,7 @@ public class PorteSymboleManager : MonoBehaviour
     {
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
+        PlayerPrefs.SetInt("PorteSymboleOuverte", 0);
     }
 
     public void CheckAlignment()
@@ -41,7 +43,8 @@ public class PorteSymboleManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("🔒 Porte encore fermée...");
+            Debug.Log("🔒 Porte encore fermée");
+
         }
     }
 
@@ -54,9 +57,8 @@ public class PorteSymboleManager : MonoBehaviour
 
     private void OnPorteOuverte()
     {
+        PlayerPrefs.SetInt("PorteSymboleOuverte", 1);
         SceneManager.LoadScene("Escape Game");
-        audioSource.clip = doorSound;
-        audioSource.Play();
 
     }
 }
