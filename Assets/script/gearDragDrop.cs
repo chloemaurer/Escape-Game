@@ -12,6 +12,7 @@ public class GearDrag : MonoBehaviour
     private Transform originalParent;
 
     private bool dragging = false;
+    public bool canDrag = true;
 
     void Start()
     {
@@ -23,6 +24,7 @@ public class GearDrag : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (!canDrag) return;
         originalPos = transform.position;
         originalParent = transform.parent;
 
@@ -44,6 +46,7 @@ public class GearDrag : MonoBehaviour
 
     private void OnMouseUp()
     {
+        if (!dragging) return;
         dragging = false;
 
         // On demande le snap
