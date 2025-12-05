@@ -1,32 +1,42 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StatusRotationManage : MonoBehaviour
 {
-    public GameObject[] statusPrefabs; // Assign�s dans l'inspector
+    public Transform StatusParent;  // parent contenant toutes les statues
+
     private GameObject currentStatue;
 
     void Start()
     {
-        string id = PlayerPrefs.GetString("SelectedStatue");
+        string id = PlayerPrefs.GetString("SelectedStatue", "null");
+        Debug.Log("ID reçu dans la scene rotation : " + id);
 
-        // Trouver le prefab correspondant
-        foreach (GameObject prefab in statusPrefabs)
+        currentStatue = null;
+
+        // Désactive toutes les statues et cherche celle à activer
+        for (int i = 0; i < StatusParent.childCount; i++)
         {
-            if (prefab.name == id) // nom = identique � l'ID
+            GameObject child = StatusParent.GetChild(i).gameObject;
+            if (child.name == id)
             {
-                currentStatue = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-                break;
+                currentStatue = child;
+                child.SetActive(true);
+            }
+            else
+            {
+                child.SetActive(false);
             }
         }
 
-        if (currentStatue != null)
+        if (currentStatue == null)
         {
-            // Ajoute automatiquement le script de rotation
-            currentStatue.AddComponent<StatusRotation>();
+            Debug.LogError("Aucune statue trouvée pour l'ID : " + id);
         }
         else
         {
-            Debug.LogError("Aucun prefab trouv� pour l'ID : " + id);
+            // Ajoute le script de rotation si nécessaire
+            if (currentStatue.GetComponent<StatusRotate>() == null)
+                currentStatue.AddComponent<StatusRotate>();
         }
     }
 }

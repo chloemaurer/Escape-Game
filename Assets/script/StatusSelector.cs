@@ -1,17 +1,21 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
+
 
 public class StatusSelector : MonoBehaviour
 {
-    public string statueID; // Exemple : "Statue1"
+    public string statueID; // Doit être "statue1", "statue2", etc.
 
+    public void Awake()
+    {
+        PlayerPrefs.DeleteKey("SelectedStatue");
+    }
     private void OnMouseDown()
     {
-        PlayerPrefs.SetString("SelectedStatus", statueID);
+        PlayerPrefs.SetString("SelectedStatue", statueID);
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("SceneRotation");
+        Debug.Log("Statue sélectionnée : " + statueID);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Statue");
     }
 }
-
-
