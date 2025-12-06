@@ -52,13 +52,18 @@ public class GearDrag : MonoBehaviour
         // On demande le snap
         bool snapped = SnapManager.Instance.TrySnap(this);
 
-        // Si snap raté → reset
-        if (!snapped)
+        if (snapped)
         {
+            // Tous les engrenages sont placés ? → vérifie la fin
+            SnapManager.Instance.Checkfin();
+        }
+        else
+        {
+            // Snap raté → reset
             transform.position = originalPos;
             transform.SetParent(originalParent);
-            // Remet la taille à l'original (1,1,1)
             transform.localScale = originalScale;
         }
     }
+
 }

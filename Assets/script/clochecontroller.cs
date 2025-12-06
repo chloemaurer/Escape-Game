@@ -36,7 +36,12 @@ public class ClocheController : MonoBehaviour
 
     private void Start()
     {
-        ShowFireSet(currentSequence);
+        if (PlayerPrefs.GetInt("fireset1", 0) == 1)
+{
+            currentSequence = 0;
+            ShowFireSet(currentSequence);
+
+        }
     }
 
     // Affiche le set de feux correspondant à la séquence actuelle

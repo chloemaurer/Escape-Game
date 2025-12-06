@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SnapManager : MonoBehaviour 
 {
@@ -12,6 +13,8 @@ public class SnapManager : MonoBehaviour
     {
         Instance = this;
         points.AddRange(FindObjectsOfType<SnapPoint>());
+        PlayerPrefs.SetInt("GearDoorOpened", 0);
+
     }
 
     public bool TrySnap(GearDrag gear)
@@ -51,32 +54,40 @@ public class SnapManager : MonoBehaviour
     {
         foreach (var p in points)
         {
-            // Vérifie si un engrenage est enfant du SnapPoint
-            if (p.transform.childCount == 0)
+            // Vérifie qu'un GearDrag est présent en enfant
+            GearDrag gear = p.GetComponentInChildren<GearDrag>();
+            if (gear == null)
             {
-                Debug.Log("❌ Un point n'a pas d'engrenage.");
+                Debug.Log("❌ Aucun engrenage sur le point " + p.name);
                 return; // pas fini
             }
 
-            // Récupère l'engrenage snapé
-            GearDrag gear = p.GetComponentInChildren<GearDrag>();
-
-            if (gear == null)
-            {
-                Debug.Log("❌ Un enfant n'est pas un engrenage.");
-                return;
-            }
-
-            // Vérifie l'ID
+            // Vérifie que l'ID correspond
             if (gear.gearID != p.requiredGearID)
             {
-                Debug.Log("❌ Mauvais engrenage sur un point.");
+                Debug.Log("❌ Mauvais engrenage sur le point " + p.name);
                 return;
             }
         }
 
-        // Si on arrive ici → TOUT EST OK
-        Debug.Log("🎉 FIN DU JEU !");
+        // Tous les points ont le bon engrenage
+        Debug.Log("🎉 Tous les engrenages sont en place !");
+        PlayerPrefs.SetInt("GearDoorOpened", 1);
+
+        // Vérifie que la scène existe dans Build Settings
+        if (Application.CanStreamedLevelBeLoaded("Escape Game"))
+        {
+            fireplay();
+            SceneManager.LoadScene("Escape Game");
+        }
+        else
+        {
+            Debug.LogError("❌ La scène 'Escape Game' n'est pas dans les Build Settings !");
+        }
     }
 
+    private static void fireplay()
+    {
+        PlayerPrefs.SetInt("fireset1", 1);
+    }
 }

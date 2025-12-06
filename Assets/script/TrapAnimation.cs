@@ -25,6 +25,10 @@ public class TrapAnimation : MonoBehaviour
             Debug.Log("Closing door at start.");
             CloseDoor();
         }
+        if (PlayerPrefs.GetInt("GearDoorOpened", 0) == 1)
+        {
+            OpenDoor();
+        }
     }
 
     public void OpenDoor()
