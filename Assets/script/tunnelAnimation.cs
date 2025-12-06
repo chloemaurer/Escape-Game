@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PorteSymboleAnimation1 : MonoBehaviour
+public class tunnelanimation : MonoBehaviour
 {
     public AudioClip doorSound;
     private AudioSource audioSource;
@@ -11,10 +11,10 @@ public class PorteSymboleAnimation1 : MonoBehaviour
         audioSource.playOnAwake = false;
 
     }
-    
+
     private void Start()
     {
-        if (PlayerPrefs.GetInt("PorteSymboleOuverte", 0) == 1)
+        if (PlayerPrefs.GetInt("tunnelopen", 0) == 1)
         {
             OpenDoor();
         }
@@ -22,7 +22,7 @@ public class PorteSymboleAnimation1 : MonoBehaviour
 
     public void OpenDoor()
     {
-        porteanimation.SetTrigger("ouverte");
+        porteanimation.SetTrigger("ouvertureTunnel");
         audioSource.clip = doorSound;
         audioSource.Play();
 

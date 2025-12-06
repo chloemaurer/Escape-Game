@@ -36,13 +36,24 @@ public class ClocheController : MonoBehaviour
 
     private void Start()
     {
+        // Désactiver tous les feux au début
+        for (int i = 0; i < fireSetsParent.childCount; i++)
+            fireSetsParent.GetChild(i).gameObject.SetActive(false);
+
+        // Si l'énigme des engrenages est résolue
         if (PlayerPrefs.GetInt("fireset1", 0) == 1)
-{
+        {
+            // On active le premier FireSet (index 0)
             currentSequence = 0;
             ShowFireSet(currentSequence);
-
+        }
+        else
+        {
+            // Sinon : NE RIEN AFFICHER (aucun feu)
+            currentSequence = 0;
         }
     }
+
 
     // Affiche le set de feux correspondant à la séquence actuelle
     private void ShowFireSet(int index)
@@ -89,6 +100,7 @@ public class ClocheController : MonoBehaviour
                     ShowFireSet(currentSequence);
                 else
                     Debug.Log("🎊 Toutes les séquences terminées !");
+                    PlayerPrefs.SetInt("tunnelopen", 1);
             }
         }
         else
