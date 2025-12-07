@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ClocheController : MonoBehaviour
 {
     public static ClocheController Instance;
@@ -8,6 +9,7 @@ public class ClocheController : MonoBehaviour
     private AudioSource audioSource;
     [Header("Parent contenant les 5 sets de feux")]
     public Transform fireSetsParent;
+    public Animator porteanimation;
 
     // Séquences des cloches
     private List<List<int>> sequences = new List<List<int>>()
@@ -97,14 +99,20 @@ public class ClocheController : MonoBehaviour
                 currentIndex = 0;
 
                 if (currentSequence < sequences.Count)
+                {
                     ShowFireSet(currentSequence);
+                }
                 else
+                {
+                    porteanimation.SetTrigger("ouvertureTunnel");
                     Debug.Log("🎊 Toutes les séquences terminées !");
-                    PlayerPrefs.SetInt("tunnelopen", 1);
+                }
+
             }
         }
         else
         {
+           
             // Mauvaise note
             Debug.Log("❌ Mauvaise note ! Bell = " + bellID +
                       " | Attendu = " + seq[currentIndex]);

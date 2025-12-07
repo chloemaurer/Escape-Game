@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PuzzleManager : MonoBehaviour
 {
 
     public RawImage[] pieces;
-
     public float tolerance = 10f;
+
+    private void Awake()
+    {
+        PlayerPrefs.SetInt("PuzzleCompleted", 0);
+    }
 
     public void CheckPuzzle()
     {
@@ -23,6 +29,13 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-        Debug.Log("Puzzle finit");
+        PuzzleComplet();
+    }
+
+    private void PuzzleComplet()
+    {
+        PlayerPrefs.SetInt("PuzzleCompleted", 1);
+        SceneManager.LoadScene("Escape Game");
+
     }
 }

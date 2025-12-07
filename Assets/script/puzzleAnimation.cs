@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class tunnelanimation : MonoBehaviour
+public class puzzleAnimation : MonoBehaviour
 {
     public AudioClip doorSound;
     private AudioSource audioSource;
-    public Animator porteanimation;
+    public Animator puzzle;
     private void Awake()
     {
         audioSource = gameObject.AddComponent<AudioSource>();
@@ -14,15 +14,15 @@ public class tunnelanimation : MonoBehaviour
 
     private void Start()
     {
-        if (PlayerPrefs.GetInt("tunnelopen", 0) == 1)
+        if (PlayerPrefs.GetInt("PuzzleCompleted", 0) == 1)
         {
-            OpenDoor();
+            PuzzleMove();
         }
     }
 
-    public void OpenDoor()
+    public void PuzzleMove()
     {
-        porteanimation.SetTrigger("ouvertureTunnel");
+        puzzle.SetTrigger("puzzleopen");
         audioSource.clip = doorSound;
         audioSource.Play();
 

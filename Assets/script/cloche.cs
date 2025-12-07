@@ -16,6 +16,7 @@ public class Bell : MonoBehaviour
     private void OnMouseDown()
     {
         Ring();
+        
     }
 
     public void Ring()
