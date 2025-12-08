@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 public class StatusRotate : MonoBehaviour
 {
@@ -12,14 +13,27 @@ public class StatusRotate : MonoBehaviour
     public GameObject rayOut;
 
     public int requiredStep;
+    public AudioClip RotationSound;
+    private AudioSource audioSource;
 
     // --------------------------------------------------
     // UNIQUEMENT quand la souris clique sur CETTE statue
     // --------------------------------------------------
+
+    private void Awake()
+    {
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+    }
+
+
     private void OnMouseDown()
     {
         isDragging = true;
         lastMouseX = Input.mousePosition.x;
+        audioSource.clip = RotationSound;
+        audioSource.Play();
+
     }
 
     private void OnMouseUp()

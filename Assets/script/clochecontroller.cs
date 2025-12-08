@@ -6,6 +6,7 @@ public class ClocheController : MonoBehaviour
 {
     public static ClocheController Instance;
     public AudioClip fireSound;
+    public AudioClip TunnelSound;
     private AudioSource audioSource;
     [Header("Parent contenant les 5 sets de feux")]
     public Transform fireSetsParent;
@@ -70,6 +71,20 @@ public class ClocheController : MonoBehaviour
             currentFireSet.GetChild(i).gameObject.SetActive(true);
     }
 
+    private void PlaySound2D(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null) return;
+
+        GameObject temp = new GameObject("TempAudio");
+        AudioSource a = temp.AddComponent<AudioSource>();
+        a.clip = clip;
+        a.volume = volume;
+        a.spatialBlend = 0f; // 0 = 2D, le son n’est pas affecté par la distance
+        a.Play();
+        Destroy(temp, clip.length);
+    }
+
+
     // Méthode pour enregistrer la note tapée par le joueur
     public void RegisterNote(int bellID)
     {
@@ -105,6 +120,10 @@ public class ClocheController : MonoBehaviour
                 else
                 {
                     porteanimation.SetTrigger("ouvertureTunnel");
+
+                    // Jouer le son en 2D, volume constant
+                    PlaySound2D(TunnelSound, 1f);
+
                     Debug.Log("🎊 Toutes les séquences terminées !");
                 }
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 public class lionStatue : MonoBehaviour
 {
@@ -13,28 +14,65 @@ public class lionStatue : MonoBehaviour
 
     [Header("Prefab du diamant à placer")]
     public GameObject diamondPrefab;
+    private Animator lionhead;
 
     private bool placed = false;
+    public AudioClip LionDoor;
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+    }
+
+    private void Start()
+    {
+        lionhead = GetComponent<Animator>();
+    }
 
     private void OnMouseDown()
     {
-        if (!PlayerInventory.HasDiamond || placed) return;
+        // Si le joueur n’a pas le diamant ou si c'est déjà placé → on arrête
+        if (!PlayerInventory.HasDiamond || placed)
+            return;
 
         placed = true;
         PlayerInventory.HasDiamond = false;
 
-        // Désactiver l’indicateur UI
+        // Désactiver l'indicateur UI si trouvé
         GameObject indicator = GameObject.Find("DiamondIndicatorUI");
-        if (indicator != null) indicator.SetActive(false);
+        if (indicator != null)
+            indicator.SetActive(false);
 
-        // Instancier le diamant sur la statue
+        // Instancier le diamant
         GameObject diamond = Instantiate(diamondPrefab);
 
-        // Appliquer position / rotation / scale exacts
+        // S'assurer que le diamant est actif
+        diamond.SetActive(true);
+
+        // Le mettre enfant du bone qui correspond à l'œil du lion
+        diamond.transform.SetParent(lionhead.transform, false);
+
+        // Appliquer position / rotation / scale
         diamond.transform.position = targetPosition;
         diamond.transform.rotation = targetRotation;
         diamond.transform.localScale = targetScale;
 
+        lionhead.SetTrigger("openlion");
+        PlaySound2D(LionDoor, 1f);
         Debug.Log("💎 Diamant placé sur la statue !");
     }
+
+    private void PlaySound2D(AudioClip clip, float volume = 1f)
+    {
+        GameObject temp = new GameObject("TempAudio");
+        AudioSource a = temp.AddComponent<AudioSource>();
+        a.clip = clip;
+        a.volume = volume;
+        a.spatialBlend = 0f; // 0 = 2D, 1 = 3D
+        a.Play();
+        Destroy(temp, clip.length);
+    }
+
 }
