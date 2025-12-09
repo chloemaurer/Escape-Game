@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Menu.unity
+    guid: d9b2f02eb72d2b74cb58c16ac5f764ac
+  - enabled: 1
     path: Assets/Scenes/Escape Game.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
@@ -15,11 +18,11 @@ EditorBuildSettings:
     path: Assets/Scenes/labyrinthe.unity
     guid: 327234b5e4bf92746a0823d3b051f0c3
   - enabled: 1
-    path: Assets/Scenes/puzzle.unity
-    guid: 7ad7bd582c62ff94f89c57fa13394355
-  - enabled: 1
     path: Assets/Scenes/Engrenages.unity
     guid: f0de412a23b313748ae02e01e363772f
+  - enabled: 1
+    path: Assets/Scenes/puzzle.unity
+    guid: 7ad7bd582c62ff94f89c57fa13394355
   - enabled: 1
     path: Assets/Scenes/Statue.unity
     guid: 5c680f46db4a3c447aa333315447b947

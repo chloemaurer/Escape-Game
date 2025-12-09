@@ -1,25 +1,23 @@
 using UnityEngine;
+using UnityEngine.UI; // nécessaire pour Slider et Toggle
 
 public class BackgroundMusic : MonoBehaviour
 {
-    public static BackgroundMusic Instance; // Singleton pour éviter les duplications
+    public static BackgroundMusic Instance; // Singleton
 
-    [Header("Clip de musique de fond")]
-    public AudioClip backgroundClip;
-
-    [Header("Volume de la musique")]
-    [Range(0f, 1f)]
-    public float volume = 0.5f;
+    [Header("UI Controls")]
+    public Slider volumeSlider;   // le slider du menu
+    public Toggle musicToggle;    // le toggle du menu
 
     private AudioSource audioSource;
 
     private void Awake()
     {
-        // Singleton : si une instance existe déjà, détruire ce GameObject
+        // Singleton
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Ne pas détruire entre les scènes
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -27,16 +25,31 @@ public class BackgroundMusic : MonoBehaviour
             return;
         }
 
-        // Ajouter AudioSource si inexistant
-        audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.clip = backgroundClip;
-        audioSource.loop = true;           // Boucle infinie
-        audioSource.spatialBlend = 0f;     // 2D, volume constant partout
-        audioSource.volume = volume;
-        audioSource.playOnAwake = false;
+        audioSource = GetComponent<AudioSource>();
 
-        // Jouer la musique
-        if (backgroundClip != null)
-            audioSource.Play();
+        if (audioSource != null)
+        {
+            audioSource.loop = true;
+            if (!audioSource.isPlaying)
+                audioSource.Play();
+        }
+        else
+        {
+            Debug.LogError("AudioSource manquant sur le GameObject BackgroundMusic !");
+        }
+    }
+
+    private void Update()
+    {
+        if (audioSource != null)
+        {
+            // récupère la valeur du slider et applique le volume
+            if (volumeSlider != null)
+                audioSource.volume = Mathf.Clamp01(volumeSlider.value);
+
+            // récupère la valeur du toggle et applique le mute
+            if (musicToggle != null)
+                audioSource.mute = !musicToggle.isOn;
+        }
     }
 }
