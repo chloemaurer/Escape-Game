@@ -4,54 +4,53 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
-    [Tooltip("Fraction of the screen that"), Range(0, 1)]
-    public float ScreenInteractionFraction = 0.1f;
+    [SerializeField, Range(0, 1)]
+    private float screenInteractionFraction = 0.1f; // portion de l'écran pour déclencher la rotation
 
-    public GameObject Player;
-    public float RotationSpeed = 100f; // Augmenté pour une meilleure réactivité
+    [SerializeField] private GameObject player; // le joueur à suivre
+    [SerializeField] private float rotationSpeed = 100f; // vitesse de rotation de la caméra
 
-    private Vector3 offset; // Stocke la position relative de la caméra par rapport au centre de masse
+    private Vector3 offset; // position relative de la caméra par rapport au centre de masse du joueur
 
     void Start()
     {
-        if (Player == null) return;
+        if (player == null) return;
 
-        Rigidbody rb = Player.GetComponent<Rigidbody>();
+        Rigidbody rb = player.GetComponent<Rigidbody>();
         if (rb == null) return;
 
-        // Calculer l'offset initial entre la caméra et le centre de masse
+        // calcul initial de la distance entre la caméra et le centre de masse du joueur
         offset = transform.position - rb.worldCenterOfMass;
     }
 
     void LateUpdate()
     {
-        if (Player == null) return;
+        if (player == null) return;
 
-        Rigidbody rb = Player.GetComponent<Rigidbody>();
+        Rigidbody rb = player.GetComponent<Rigidbody>();
         if (rb == null) return;
 
         Vector3 centerOfMass = rb.worldCenterOfMass;
-
         float rotationInput = 0f;
 
-        // Vérification des mouvements de la souris pour ajuster l'angle
-        if (Input.mousePosition.x < Screen.width * ScreenInteractionFraction)
+        // regarde la position de la souris pour déterminer si on doit tourner la caméra
+        if (Input.mousePosition.x < Screen.width * screenInteractionFraction)
         {
             rotationInput = 1f;
         }
-        else if (Input.mousePosition.x > Screen.width * (1 - ScreenInteractionFraction))
+        else if (Input.mousePosition.x > Screen.width * (1 - screenInteractionFraction))
         {
             rotationInput = -1f;
         }
 
-        // Rotation autour du centre de masse
-        Quaternion rotation = Quaternion.AngleAxis(rotationInput * RotationSpeed * Time.deltaTime, Vector3.up);
+        // applique la rotation autour du centre de masse
+        Quaternion rotation = Quaternion.AngleAxis(rotationInput * rotationSpeed * Time.deltaTime, Vector3.up);
         offset = rotation * offset;
 
-        // Nouvelle position de la caméra
+        // nouvelle position de la caméra
         transform.position = centerOfMass + offset;
 
-        // Regarder le joueur
+        // orienter la caméra vers le joueur
         transform.LookAt(centerOfMass);
     }
 }

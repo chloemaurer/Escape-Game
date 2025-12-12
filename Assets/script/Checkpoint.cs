@@ -1,36 +1,36 @@
 ﻿using UnityEngine;
-using System.Collections.Generic; // 🔑 N'oubliez pas ceci !
+using System.Collections.Generic;
 
 public class Checkpoint : MonoBehaviour
 {
-    [Header("Nom unique du checkpoint")]
-    public string checkpointName;
+    [SerializeField] private string checkpointName; // nom unique de ce checkpoint
 
-    // 🔑 MAPPING STATIQUE : Stocke la référence Transform de chaque checkpoint.
-    // Cette variable statique persiste même après les changements de scène.
-    private static Dictionary<string, Transform> AllCheckpoints = new Dictionary<string, Transform>();
+    // dictionnaire statique qui garde la référence de tous les checkpoints
+    // persiste entre les scènes
+    private static Dictionary<string, Transform> allCheckpoints = new Dictionary<string, Transform>();
 
     void OnEnable()
     {
-        // Enregistrer ou mettre à jour la référence dès l'activation
-        if (AllCheckpoints.ContainsKey(checkpointName))
+        // ajoute ou met à jour ce checkpoint dans le dictionnaire
+        if (allCheckpoints.ContainsKey(checkpointName))
         {
-            AllCheckpoints[checkpointName] = transform;
+            allCheckpoints[checkpointName] = transform;
         }
         else
         {
-            AllCheckpoints.Add(checkpointName, transform);
+            allCheckpoints.Add(checkpointName, transform);
         }
-        // Pour debuguer :
-        // Debug.Log($"[CHECKPOINT MANAGER] Enregistré/Mis à jour : {checkpointName}");
+
+        // debug : vérifie l'enregistrement du checkpoint
+        // Debug.Log("Checkpoint enregistré ou mis à jour : " + checkpointName);
     }
 
-    // Assure que l'objet est bien retiré de la mémoire si la scène se décharge complètement.
     void OnDisable()
     {
-        if (AllCheckpoints.ContainsKey(checkpointName) && AllCheckpoints[checkpointName] == transform)
+        // supprime ce checkpoint si la scène se décharge
+        if (allCheckpoints.ContainsKey(checkpointName) && allCheckpoints[checkpointName] == transform)
         {
-            AllCheckpoints.Remove(checkpointName);
+            allCheckpoints.Remove(checkpointName);
         }
     }
 
@@ -38,10 +38,11 @@ public class Checkpoint : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Sauvegarde de la clé (le nom)
+            // sauvegarde ce checkpoint comme dernier atteint
             PlayerPrefs.SetString("LastCheckpoint", checkpointName);
             PlayerPrefs.Save();
-            Debug.Log($"Checkpoint activé (Sauvegardé) : {checkpointName}");
+
+            Debug.Log("Checkpoint activé et sauvegardé : " + checkpointName);
         }
     }
 
@@ -50,33 +51,34 @@ public class Checkpoint : MonoBehaviour
         string lastCheckpoint = PlayerPrefs.GetString("LastCheckpoint", "");
 
         if (lastCheckpoint == "")
-            return null; // Pas de checkpoint sauvegardé
+            return null; // aucun checkpoint sauvegardé
 
-        // 1. 🔑 Tenter la récupération rapide et fiable depuis la liste statique (en mémoire)
-        if (AllCheckpoints.ContainsKey(lastCheckpoint))
+        // tentative de récupération rapide depuis le dictionnaire statique
+        if (allCheckpoints.ContainsKey(lastCheckpoint))
         {
-            Debug.Log($"[SPAWN MANAGER] Respawn trouvé (mémoire statique) : {lastCheckpoint}");
-            return AllCheckpoints[lastCheckpoint];
+            Debug.Log("Respawn trouvé dans la mémoire : " + lastCheckpoint);
+            return allCheckpoints[lastCheckpoint];
         }
 
-        // 2. Tenter la recherche par FindObjectsOfType (méthode de secours)
+        // méthode de secours : recherche dans tous les objets Checkpoint de la scène
         Checkpoint[] all = FindObjectsOfType<Checkpoint>();
 
         foreach (Checkpoint cp in all)
         {
             if (cp.checkpointName == lastCheckpoint)
             {
-                // Si trouvé tardivement, l'ajouter à la liste statique pour les prochaines fois
-                if (!AllCheckpoints.ContainsKey(cp.checkpointName))
+                // ajoute au dictionnaire pour les prochaines fois
+                if (!allCheckpoints.ContainsKey(cp.checkpointName))
                 {
-                    AllCheckpoints.Add(cp.checkpointName, cp.transform);
+                    allCheckpoints.Add(cp.checkpointName, cp.transform);
                 }
-                Debug.Log($"[SPAWN MANAGER] Respawn trouvé (recherche tardive) : {lastCheckpoint}");
+
+                Debug.Log("Respawn trouvé après recherche dans la scène : " + lastCheckpoint);
                 return cp.transform;
             }
         }
 
-        Debug.LogError($"Checkpoint non trouvé dans la scène : {lastCheckpoint}. Le joueur spawnra à l'origine de la scène.");
+        Debug.LogError("Checkpoint non trouvé dans la scène : " + lastCheckpoint + ". Le joueur spawnera à l'origine.");
         return null;
     }
 }

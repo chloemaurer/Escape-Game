@@ -3,22 +3,16 @@ using UnityEngine.Audio;
 
 public class StatusRotate : MonoBehaviour
 {
-    public float rotationSpeed = 40f;
+    [SerializeField] private float rotationSpeed = 40f; // vitesse de rotation
+    [SerializeField] private float snapAngle = 30f; // angle pour l'accrochage
+    [SerializeField] private GameObject rayIn; // rayon entrant
+    [SerializeField] private GameObject rayOut; // rayon sortant
+    [SerializeField] private int requiredStep; // étape requise pour activer le rayon
+    [SerializeField] private AudioClip rotationSound; // son de rotation
+
+    private AudioSource audioSource;
     private bool isDragging = false;
     private float lastMouseX;
-
-    public float snapAngle = 30f;
-
-    public GameObject rayIn;
-    public GameObject rayOut;
-
-    public int requiredStep;
-    public AudioClip RotationSound;
-    private AudioSource audioSource;
-
-    // --------------------------------------------------
-    // UNIQUEMENT quand la souris clique sur CETTE statue
-    // --------------------------------------------------
 
     private void Awake()
     {
@@ -26,22 +20,22 @@ public class StatusRotate : MonoBehaviour
         audioSource.playOnAwake = false;
     }
 
-
     private void OnMouseDown()
     {
         isDragging = true;
         lastMouseX = Input.mousePosition.x;
-        audioSource.clip = RotationSound;
-        audioSource.Play();
 
+        if (audioSource != null && rotationSound != null)
+        {
+            audioSource.clip = rotationSound;
+            audioSource.Play();
+        }
     }
 
     private void OnMouseUp()
     {
         isDragging = false;
     }
-
-    // --------------------------------------------------
 
     private void Update()
     {
@@ -59,24 +53,17 @@ public class StatusRotate : MonoBehaviour
         UpdateOutputRay();
     }
 
-    // --------------------------------------------------
-
     private void SnapToIncrement()
     {
         float currentY = transform.eulerAngles.y;
         float snappedY = Mathf.Round(currentY / snapAngle) * snapAngle;
-
-        transform.eulerAngles = new Vector3(
-            transform.eulerAngles.x,
-            snappedY,
-            transform.eulerAngles.z
-        );
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, snappedY, transform.eulerAngles.z);
     }
-
-    // --------------------------------------------------
 
     private void UpdateOutputRay()
     {
+        if (rayIn == null || rayOut == null) return;
+
         if (!rayIn.activeSelf)
         {
             rayOut.SetActive(false);
@@ -84,7 +71,6 @@ public class StatusRotate : MonoBehaviour
         }
 
         float step = Mathf.Round(transform.eulerAngles.y / snapAngle);
-
         rayOut.SetActive(step == requiredStep);
     }
 }

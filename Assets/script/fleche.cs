@@ -1,19 +1,20 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // nécessaire pour LoadScene
+using UnityEngine.SceneManagement;
 
 public class Fleche : MonoBehaviour
 {
-    [SerializeField] private string sceneName;
+    [SerializeField] private string sceneName; // nom de la scène à charger
 
     private void OnMouseDown()
     {
         if (!string.IsNullOrEmpty(sceneName))
         {
+            // charge la scène correspondante
             SceneManager.LoadScene(sceneName);
         }
         else
         {
-            Debug.LogWarning("Aucune scène assignée à la flèche.");
+            Debug.LogWarning("Aucune scène n'est assignée à cette flèche.");
         }
     }
 }

@@ -4,32 +4,22 @@ using UnityEngine;
 
 public class NavigationCharacterControler : MonoBehaviour
 {
-    // --- Variables de Configuration ---
+    // --- Variables de configuration ---
+    [SerializeField] private Rigidbody rb;                 // Rigidbody du personnage
+    [SerializeField] private float Speed = 7f;             // vitesse de déplacement en m/s
+    [SerializeField] private float RotationSpeed = 180f;   // vitesse de rotation en degrés/s
+    [SerializeField] private bool UsePhysics = true;       // utiliser la physique pour le mouvement
 
-    [Header("Mouvement & Rotation")]
-    public Rigidbody rb;
-    [Tooltip("Vitesse en mètres par seconde (Réduire de 150 à ~5-10 après correction!)")]
-    // 🚨 ATTENTION : Changez cette valeur dans l'Inspecteur (ex: 7f)
-    public float Speed = 7f;
-    public float RotationSpeed = 180f;
-    public bool UsePhysics = true;
+    [SerializeField] private float JumpForce = 500f;       // force appliquée lors du saut
+    [SerializeField] private LayerMask GroundLayer;        // couche considérée comme sol
 
-    [Header("Saut & Sol")]
-    [Tooltip("Force verticale appliquée lors du saut")]
-    public float JumpForce = 500f;
+    // --- Variables d'input ---
+    private float forwardInput = 0f;
+    private float turnInput = 0f;
+    private bool sprintInput = false;
+    private bool jumpInput = false;
 
-    [Tooltip("LayerMask des objets considérés comme 'sol'")]
-    public LayerMask GroundLayer;
-
-    // --- Variables d'Input ---
-
-    float forwardInput = 0f;
-    float turnInput = 0f;
-    bool sprintInput = false;
-    bool jumpInput = false;
-
-    // --- Méthode Start ---
-
+    // --- Start ---
     void Start()
     {
         if (rb == null)
@@ -42,8 +32,7 @@ public class NavigationCharacterControler : MonoBehaviour
         }
     }
 
-    // --- Méthode Update (Gestion des Inputs) ---
-
+    // --- Update : lecture des inputs ---
     void Update()
     {
         forwardInput = Input.GetAxis("Vertical");
@@ -54,8 +43,7 @@ public class NavigationCharacterControler : MonoBehaviour
             jumpInput = true;
     }
 
-    // --- Méthode FixedUpdate (Gestion de la Physique) ---
-
+    // --- FixedUpdate : gestion du mouvement physique ---
     void FixedUpdate()
     {
         if (rb == null || !UsePhysics || rb.isKinematic) return;
@@ -63,34 +51,27 @@ public class NavigationCharacterControler : MonoBehaviour
         float speedFactor = sprintInput ? 1.5f : 1f;
         float currentSpeed = Speed * speedFactor;
 
-        // 1. ROTATION (Méthode correcte pour un Rigidbody)
+        // 1. Rotation
         float turnAngle = turnInput * RotationSpeed * Time.fixedDeltaTime;
         Quaternion deltaRot = Quaternion.Euler(0f, turnAngle, 0f);
         rb.MoveRotation(rb.rotation * deltaRot);
 
-        // 2. MOUVEMENT HORIZONTAL (CORRIGÉ : Pas de multiplication par Time.fixedDeltaTime sur la vélocité)
-        // On définit la vélocité désirée en mètres/seconde
+        // 2. Mouvement horizontal
         Vector3 desiredHorizontalVelocity = transform.forward * forwardInput * currentSpeed;
-
-        // On applique cette vélocité, en conservant la composante verticale actuelle
         rb.linearVelocity = new Vector3(desiredHorizontalVelocity.x, rb.linearVelocity.y, desiredHorizontalVelocity.z);
 
-        // 3. GESTION DU SAUT
+        // 3. Gestion du saut
         if (jumpInput && IsGrounded())
         {
-            // Réinitialiser la vélocité verticale avant d'ajouter l'impulsion
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-
-            // Appliquer la force
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
         }
 
         jumpInput = false;
     }
 
-    // --- Méthode IsGrounded (Vérification au Sol) ---
-
-    bool IsGrounded()
+    // --- Vérification si le personnage est au sol ---
+    private bool IsGrounded()
     {
         Collider characterCollider = GetComponent<Collider>();
         if (characterCollider == null) return true;

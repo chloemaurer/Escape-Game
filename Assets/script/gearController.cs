@@ -3,20 +3,26 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SnapManager : MonoBehaviour 
+public class SnapManager : MonoBehaviour
 {
     public static SnapManager Instance;
+
+    [Header("Distance max pour que le snap fonctionne")]
     public float snapDistance = 1f; // Ajuste selon la taille du niveau
+
     private List<SnapPoint> points = new List<SnapPoint>();
 
     private void Awake()
     {
         Instance = this;
         points.AddRange(FindObjectsOfType<SnapPoint>());
-        PlayerPrefs.SetInt("GearDoorOpened", 0);
 
+        // Réinitialisation des prefs
+        PlayerPrefs.SetInt("labyrintheDoorOpened", 0);
+        PlayerPrefs.SetInt("fireset1", 0);
     }
 
+    // Tente de snapper un engrenage sur un point
     public bool TrySnap(GearDrag gear)
     {
         foreach (var p in points)
@@ -33,9 +39,7 @@ public class SnapManager : MonoBehaviour
                     gear.transform.SetParent(p.transform);
                     gear.canDrag = false; // Désactive le drag après le snap
                     gear.transform.localScale *= 2; // double la taille
-                   
-                    
-                    // ⚡ On ne touche pas le scale ici
+
                     return true;
                 }
                 else
@@ -50,11 +54,11 @@ public class SnapManager : MonoBehaviour
         return false;
     }
 
+    // Vérifie si tous les engrenages sont bien placés
     public void Checkfin()
     {
         foreach (var p in points)
         {
-            // Vérifie qu'un GearDrag est présent en enfant
             GearDrag gear = p.GetComponentInChildren<GearDrag>();
             if (gear == null)
             {
@@ -62,7 +66,6 @@ public class SnapManager : MonoBehaviour
                 return; // pas fini
             }
 
-            // Vérifie que l'ID correspond
             if (gear.gearID != p.requiredGearID)
             {
                 Debug.Log("❌ Mauvais engrenage sur le point " + p.name);
@@ -70,14 +73,13 @@ public class SnapManager : MonoBehaviour
             }
         }
 
-        // Tous les points ont le bon engrenage
+        // Tous les points sont corrects
         Debug.Log("🎉 Tous les engrenages sont en place !");
-        PlayerPrefs.SetInt("GearDoorOpened", 1);
+        PlayerPrefs.SetInt("labyrintheDoorOpened", 1);
 
-        // Vérifie que la scène existe dans Build Settings
         if (Application.CanStreamedLevelBeLoaded("Escape Game"))
         {
-            fireplay();
+            FirePlay();
             SceneManager.LoadScene("Escape Game");
         }
         else
@@ -86,7 +88,8 @@ public class SnapManager : MonoBehaviour
         }
     }
 
-    private static void fireplay()
+    // Active le feu du puzzle
+    private static void FirePlay()
     {
         PlayerPrefs.SetInt("fireset1", 1);
     }

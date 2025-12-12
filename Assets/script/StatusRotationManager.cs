@@ -2,21 +2,22 @@
 
 public class StatusRotationManage : MonoBehaviour
 {
-    public Transform StatusParent;  // parent contenant toutes les statues
+    [SerializeField] private Transform statusParent; // parent contenant toutes les statues
 
     private GameObject currentStatue;
 
-    void Start()
+    private void Start()
     {
         string id = PlayerPrefs.GetString("SelectedStatue", "null");
-        Debug.Log("ID reçu dans la scene rotation : " + id);
+        Debug.Log("ID reçu dans la scène rotation : " + id);
 
         currentStatue = null;
 
-        // Désactive toutes les statues et cherche celle à activer
-        for (int i = 0; i < StatusParent.childCount; i++)
+        // Parcourt toutes les statues et active uniquement celle sélectionnée
+        for (int i = 0; i < statusParent.childCount; i++)
         {
-            GameObject child = StatusParent.GetChild(i).gameObject;
+            GameObject child = statusParent.GetChild(i).gameObject;
+
             if (child.name == id)
             {
                 currentStatue = child;
@@ -34,7 +35,7 @@ public class StatusRotationManage : MonoBehaviour
         }
         else
         {
-            // Ajoute le script de rotation si nécessaire
+            // Si le script de rotation n'est pas déjà présent, l'ajoute
             if (currentStatue.GetComponent<StatusRotate>() == null)
                 currentStatue.AddComponent<StatusRotate>();
         }

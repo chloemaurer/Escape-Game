@@ -1,19 +1,18 @@
 using UnityEngine;
-using UnityEngine.UI; // nécessaire pour Slider et Toggle
+using UnityEngine.UI;
 
 public class BackgroundMusic : MonoBehaviour
 {
-    public static BackgroundMusic Instance; // Singleton
+    public static BackgroundMusic Instance; // instance unique de la musique
 
-    [Header("UI Controls")]
-    public Slider volumeSlider;   // le slider du menu
-    public Toggle musicToggle;    // le toggle du menu
+    [SerializeField] private Slider volumeSlider;   // slider utilisé pour gérer le volume
+    [SerializeField] private Toggle musicToggle;    // toggle utilisé pour activer ou couper la musique
 
     private AudioSource audioSource;
 
     private void Awake()
     {
-        // Singleton
+        // mise en place du singleton pour garder la musique entre les scènes
         if (Instance == null)
         {
             Instance = this;
@@ -30,12 +29,14 @@ public class BackgroundMusic : MonoBehaviour
         if (audioSource != null)
         {
             audioSource.loop = true;
+
+            // lance la musique uniquement si elle n'était pas déjà en cours
             if (!audioSource.isPlaying)
                 audioSource.Play();
         }
         else
         {
-            Debug.LogError("AudioSource manquant sur le GameObject BackgroundMusic !");
+            Debug.LogError("Le GameObject BackgroundMusic n'a pas d'AudioSource.");
         }
     }
 
@@ -43,11 +44,11 @@ public class BackgroundMusic : MonoBehaviour
     {
         if (audioSource != null)
         {
-            // récupère la valeur du slider et applique le volume
+            // applique le volume donné par le slider
             if (volumeSlider != null)
                 audioSource.volume = Mathf.Clamp01(volumeSlider.value);
 
-            // récupère la valeur du toggle et applique le mute
+            // si le toggle est désactivé, on coupe le son
             if (musicToggle != null)
                 audioSource.mute = !musicToggle.isOn;
         }

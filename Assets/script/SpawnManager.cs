@@ -6,46 +6,48 @@ public class SpawnManager : MonoBehaviour
 {
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        DontDestroyOnLoad(gameObject); // garder ce manager entre les scènes
+        SceneManager.sceneLoaded += OnSceneLoaded; // s'abonner à l'événement
     }
 
     private void OnDestroy()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded; // se désabonner proprement
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // récupère le checkpoint sauvegardé
         Transform checkpoint = Checkpoint.GetSavedCheckpoint();
         if (checkpoint == null) return;
 
+        // récupère le joueur
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
         var movement = player.GetComponent<NavigationCharacterControler>();
         var rb = player.GetComponent<Rigidbody>();
 
-        // Désactiver le mouvement avant toute modification physique
+        // désactive le mouvement pour téléportation
         if (movement != null) movement.enabled = false;
 
         if (rb != null)
         {
-            // 1. Réinitialisation complète des forces
+            // réinitialise les vitesses pour éviter les mouvements indésirables
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true; // Empêcher toute influence de la physique pendant la téléportation
+            rb.isKinematic = true; // bloque la physique
 
-            // 2. Téléportation stricte (position et rotation)
+            // téléporte le joueur au checkpoint
             player.transform.position = checkpoint.position;
             player.transform.rotation = checkpoint.rotation;
 
-            // 3. Rétablissement du Rigidbody (délai crucial)
-            StartCoroutine(ReenableMovementAfterDelay(movement, rb, 0.05f)); // Délai très court
+            // réactive la physique et le mouvement après un très court délai
+            StartCoroutine(ReenableMovementAfterDelay(movement, rb, 0.05f));
         }
         else
         {
-            // ... (Logique sans Rigidbody inchangée)
+            // cas sans Rigidbody
             player.transform.position = checkpoint.position;
             player.transform.rotation = checkpoint.rotation;
             if (movement != null) movement.enabled = true;
@@ -60,21 +62,15 @@ public class SpawnManager : MonoBehaviour
 
         if (rb != null)
         {
-            // 1. Assurez-vous que la vélocité est ZERO (encore une fois)
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-
-            // 2. Rétablir le mode non-Kinematic (la physique reprend le contrôle)
-            rb.isKinematic = false;
-
-            // 3. Force le Rigidbody à se réveiller
-            rb.WakeUp();
+            rb.isKinematic = false; // relance la physique
+            rb.WakeUp(); // assure que le Rigidbody est actif
         }
 
         if (movement != null)
         {
-            // Réactiver le contrôle à la fin de la trame de stabilité
-            movement.enabled = true;
+            movement.enabled = true; // réactive le contrôle du joueur
         }
     }
 }

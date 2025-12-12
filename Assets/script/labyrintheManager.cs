@@ -3,12 +3,12 @@ using UnityEngine.SceneManagement;
 
 public class labyrintheManager : MonoBehaviour
 {
-    public Collider[] balls;
-    public Collider[] zones;
+    [SerializeField] private Collider[] balls; // toutes les billes à vérifier
+    [SerializeField] private Collider[] zones; // zones où les billes doivent être
 
     void Update()
     {
-        // Vérifie si CHAQUE bille est dans AU MOINS UNE zone
+        // vérifie que chaque bille est dans au moins une zone
         bool allBallsInside = true;
 
         foreach (Collider ball in balls)
@@ -20,28 +20,28 @@ public class labyrintheManager : MonoBehaviour
                 if (zone.bounds.Contains(ball.transform.position))
                 {
                     thisBallInside = true;
-                    break; // pas besoin de vérifier les autres zones
+                    break; // cette bille est déjà dans une zone
                 }
             }
 
             if (!thisBallInside)
             {
                 allBallsInside = false;
-                break; // une seule bille dehors = on arrête ici
+                break; // une bille en dehors, on arrête la vérification
             }
         }
 
         if (allBallsInside)
         {
-            Debug.Log("🎉 Les trois billes sont dans une zone !");
+            Debug.Log("Toutes les billes sont dans une zone !");
             OpenTrap();
         }
     }
 
     private void OpenTrap()
     {
+        // marque la porte comme ouverte et change de scène
         PlayerPrefs.SetInt("labyrintheDoorOpened", 1);
         SceneManager.LoadScene("Escape Game");
-
     }
 }

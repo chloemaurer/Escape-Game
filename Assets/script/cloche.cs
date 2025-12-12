@@ -2,35 +2,35 @@ using UnityEngine;
 
 public class Bell : MonoBehaviour
 {
-    [Header("Assign the sound for this bell")]
-    public AudioClip bellSound;
+    [SerializeField] private AudioClip bellSound; // le son joué par cette cloche
+    [SerializeField] private int bellID;          // identifiant de la cloche
     private AudioSource audioSource;
-    public int bellID;
 
     private void Awake()
     {
+        // ajoute un AudioSource au besoin et désactive le play automatique
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
     }
 
     private void OnMouseDown()
     {
-        Ring();
-        
+        Ring(); // joue la cloche quand elle est cliquée
     }
 
     public void Ring()
     {
         if (bellSound == null)
         {
-            Debug.LogWarning($"Bell '{gameObject.name}' has no sound assigned !");
+            Debug.LogWarning("Aucun son assigné pour la cloche : " + gameObject.name);
             return;
         }
 
+        // joue le son
         audioSource.clip = bellSound;
         audioSource.Play();
 
-        // Notifier le contrôleur de séquence
+        // notifie le contrôleur de séquence si il existe
         ClocheController checker = ClocheController.Instance;
         if (checker != null)
             checker.RegisterNote(bellID);

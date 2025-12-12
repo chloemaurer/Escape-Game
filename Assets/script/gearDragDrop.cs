@@ -2,7 +2,7 @@
 
 public class GearDrag : MonoBehaviour
 {
-    public int gearID = 0;
+    [SerializeField] public int gearID = 0; // identifiant de l'engrenage
 
     private Camera cam;
     private Vector3 offset;
@@ -12,7 +12,7 @@ public class GearDrag : MonoBehaviour
     private Transform originalParent;
 
     private bool dragging = false;
-    public bool canDrag = true;
+    public bool canDrag = true; // indique si l'engrenage peut être déplacé
 
     void Start()
     {
@@ -25,6 +25,8 @@ public class GearDrag : MonoBehaviour
     private void OnMouseDown()
     {
         if (!canDrag) return;
+
+        // sauvegarde de la position et du parent d'origine
         originalPos = transform.position;
         originalParent = transform.parent;
 
@@ -32,16 +34,16 @@ public class GearDrag : MonoBehaviour
         Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist));
         offset = transform.position - mouseWorld;
 
-        dragging = true;
+        dragging = true; // début du drag
     }
 
     private void OnMouseDrag()
     {
         if (!dragging) return;
 
+        // suit la souris avec l'offset initial
         Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist));
         transform.position = mouseWorld + offset;
-        
     }
 
     private void OnMouseUp()
@@ -49,21 +51,20 @@ public class GearDrag : MonoBehaviour
         if (!dragging) return;
         dragging = false;
 
-        // On demande le snap
+        // tente de snapper l'engrenage sur un point
         bool snapped = SnapManager.Instance.TrySnap(this);
 
         if (snapped)
         {
-            // Tous les engrenages sont placés ? → vérifie la fin
+            // si tous les engrenages sont placés, vérifie la fin du puzzle
             SnapManager.Instance.Checkfin();
         }
         else
         {
-            // Snap raté → reset
+            // snap raté : retour à la position d'origine
             transform.position = originalPos;
             transform.SetParent(originalParent);
             transform.localScale = originalScale;
         }
     }
-
 }

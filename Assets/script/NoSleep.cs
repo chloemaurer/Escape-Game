@@ -2,16 +2,18 @@ using UnityEngine;
 
 public class NoSleep : MonoBehaviour
 {
-    Rigidbody rb;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Rigidbody rb; // référence au Rigidbody de l'objet
+
+    // récupère le Rigidbody au démarrage
     void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
+    // réveille le Rigidbody à chaque frame pour éviter qu'il se mette en veille
     void Update()
     {
-        rb.WakeUp();
+        if (rb != null)
+            rb.WakeUp();
     }
 }

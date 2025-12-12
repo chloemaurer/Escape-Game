@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-
 public class ClocheController : MonoBehaviour
 {
     public static ClocheController Instance;
-    public AudioClip fireSound;
-    public AudioClip TunnelSound;
-    private AudioSource audioSource;
-    [Header("Parent contenant les 5 sets de feux")]
-    public Transform fireSetsParent;
-    public Animator porteanimation;
 
-    // Séquences des cloches
+    [SerializeField] private AudioClip fireSound;    // son joué quand un feu s'allume
+    [SerializeField] private AudioClip tunnelSound;  // son joué lors de l'ouverture du tunnel
+    [SerializeField] private Transform fireSetsParent; // parent contenant tous les sets de feux
+    [SerializeField] private Animator porteAnimation;  // animation de la porte du tunnel
+
+    private AudioSource audioSource;
+
+    // liste des séquences de cloches à valider
     private List<List<int>> sequences = new List<List<int>>()
     {
         new List<int>{1,3,5,1},
@@ -27,9 +27,6 @@ public class ClocheController : MonoBehaviour
 
     private Transform currentFireSet;
 
-    
-
-
     private void Awake()
     {
         Instance = this;
@@ -39,26 +36,23 @@ public class ClocheController : MonoBehaviour
 
     private void Start()
     {
-        // Désactiver tous les feux au début
+        // désactive tous les sets de feux au départ
         for (int i = 0; i < fireSetsParent.childCount; i++)
             fireSetsParent.GetChild(i).gameObject.SetActive(false);
 
-        // Si l'énigme des engrenages est résolue
+        // si la séquence de feu 1 est déjà résolue
         if (PlayerPrefs.GetInt("fireset1", 0) == 1)
         {
-            // On active le premier FireSet (index 0)
             currentSequence = 0;
-            ShowFireSet(currentSequence);
+            ShowFireSet(currentSequence); // active le premier set
         }
         else
         {
-            // Sinon : NE RIEN AFFICHER (aucun feu)
-            currentSequence = 0;
+            currentSequence = 0; // sinon on ne montre rien
         }
     }
 
-
-    // Affiche le set de feux correspondant à la séquence actuelle
+    // affiche le set de feux correspondant à la séquence actuelle
     private void ShowFireSet(int index)
     {
         for (int i = 0; i < fireSetsParent.childCount; i++)
@@ -71,6 +65,7 @@ public class ClocheController : MonoBehaviour
             currentFireSet.GetChild(i).gameObject.SetActive(true);
     }
 
+    // joue un son en 2D
     private void PlaySound2D(AudioClip clip, float volume = 1f)
     {
         if (clip == null) return;
@@ -79,18 +74,17 @@ public class ClocheController : MonoBehaviour
         AudioSource a = temp.AddComponent<AudioSource>();
         a.clip = clip;
         a.volume = volume;
-        a.spatialBlend = 0f; // 0 = 2D, le son n’est pas affecté par la distance
+        a.spatialBlend = 0f; // 2D : pas affecté par la distance
         a.Play();
         Destroy(temp, clip.length);
     }
 
-
-    // Méthode pour enregistrer la note tapée par le joueur
+    // méthode appelée quand le joueur tape une cloche
     public void RegisterNote(int bellID)
     {
         if (currentSequence >= sequences.Count)
         {
-            Debug.Log("Toutes les séquences ont déjà été réussies !");
+            Debug.Log("Toutes les séquences ont déjà été terminées.");
             return;
         }
 
@@ -98,15 +92,14 @@ public class ClocheController : MonoBehaviour
 
         if (bellID == seq[currentIndex])
         {
-            // Bonne note
+            // note correcte
             currentIndex++;
-            Debug.Log("✅ Note correcte ! Bell = " + bellID);
+            Debug.Log("Note correcte : " + bellID);
 
             if (currentIndex >= seq.Count)
             {
-                Debug.Log("🎉 Séquence " + (currentSequence + 1) + " réussie !");
+                Debug.Log("Séquence " + (currentSequence + 1) + " réussie.");
 
-                // Jouer le son de feu
                 audioSource.clip = fireSound;
                 audioSource.Play();
 
@@ -119,32 +112,27 @@ public class ClocheController : MonoBehaviour
                 }
                 else
                 {
-                    porteanimation.SetTrigger("ouvertureTunnel");
-
-                    // Jouer le son en 2D, volume constant
-                    PlaySound2D(TunnelSound, 1f);
-
-                    Debug.Log("🎊 Toutes les séquences terminées !");
+                    // toutes les séquences terminées
+                    porteAnimation.SetTrigger("ouvertureTunnel");
+                    PlaySound2D(tunnelSound, 1f);
+                    Debug.Log("Toutes les séquences sont complétées !");
                 }
-
             }
         }
         else
         {
-           
-            // Mauvaise note
-            Debug.Log("❌ Mauvaise note ! Bell = " + bellID +
-                      " | Attendu = " + seq[currentIndex]);
+            // note incorrecte
+            Debug.Log("Mauvaise note : " + bellID + " | Attendu = " + seq[currentIndex]);
 
-            // Reset de la séquence
+            // reset de la séquence
             currentIndex = 0;
             ShowFireSet(currentSequence);
 
-            // Vérifie si la note tapée correspond au début de la séquence
+            // si la note tapée correspond au début de la séquence, on reprend
             if (bellID == seq[0])
             {
                 currentIndex = 1;
-                Debug.Log("➡ La note tapée correspond au début de la séquence, reprise !");
+                Debug.Log("La note correspond au début de la séquence, on reprend ici.");
             }
         }
     }

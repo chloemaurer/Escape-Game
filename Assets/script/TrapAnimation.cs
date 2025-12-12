@@ -2,32 +2,31 @@ using UnityEngine;
 
 public class TrapAnimation : MonoBehaviour
 {
-    public AudioClip doorSound;
-    private AudioSource audioSource;
-    public Animator trapanimation;
+    [SerializeField] private AudioClip doorSound;
+    [SerializeField] private Animator trapanimation;
 
+    private AudioSource audioSource;
     private bool doorClosed = false;
 
     private void Awake()
     {
+        // Ajoute un AudioSource pour jouer les sons
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
     }
 
     private void Start()
     {
+        // Si le labyrinthe est déjà ouvert, on ouvre la trappe
         if (PlayerPrefs.GetInt("labyrintheDoorOpened", 0) == 1)
         {
             OpenDoor();
         }
-        if (PlayerPrefs.GetInt("labyrintheDoorOpened", 0) == 0)
+        else
         {
-            Debug.Log("Closing door at start.");
+            // Sinon, on ferme la trappe au démarrage
+            Debug.Log("Fermeture de la trappe au démarrage.");
             CloseDoor();
-        }
-        if (PlayerPrefs.GetInt("GearDoorOpened", 0) == 1)
-        {
-            OpenDoor();
         }
     }
 

@@ -1,53 +1,50 @@
-﻿using System.Transactions;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PorteSymboleManager : MonoBehaviour
 {
-    [Header("Référence des trois parties")]
-    public Transform partieExterieure;
-    public Transform partieMilieu;
-    public Transform partieCentre;
-    public AudioClip doorSound;
-    private AudioSource audioSource;
-    private PorteSymboleAnimation1 porteAnimation;
+    [SerializeField] private Transform partieExterieure;   // partie extérieure de la porte
+    [SerializeField] private Transform partieMilieu;       // partie du milieu
+    [SerializeField] private Transform partieCentre;       // partie centrale
+    [SerializeField] private AudioClip doorSound;          // son joué à l’ouverture
+    [SerializeField] private float tolerance = 5f;         // tolérance d’alignement en degrés
 
-
-    [Header("Tolérance d’alignement (en degrés)")]
-    [SerializeField] private float tolerance = 5f;
-
-    private bool porteOuverte = false;
+    private AudioSource audioSource;                        // source audio pour jouer le son
+    private bool porteOuverte = false;                     // indique si la porte est ouverte
 
     private void Awake()
     {
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
+
+        // réinitialisation de l’état de la porte
         PlayerPrefs.SetInt("PorteSymboleOuverte", 0);
     }
 
+    // vérifie si les trois parties sont correctement alignées
     public void CheckAlignment()
     {
-        Debug.Log("🔍 Vérification de l’alignement des parties...");
+        Debug.Log("Vérification de l’alignement des parties...");
+
         float angleExt = NormalizeAngle(partieExterieure.localEulerAngles.z);
         float angleMil = NormalizeAngle(partieMilieu.localEulerAngles.z);
         float angleCen = NormalizeAngle(partieCentre.localEulerAngles.z);
 
-        // Vérifie si les 3 angles sont "proches"
+        // si tous les angles sont proches → porte ouverte
         if (Mathf.Abs(angleExt - angleMil) < tolerance &&
             Mathf.Abs(angleMil - angleCen) < tolerance)
         {
             porteOuverte = true;
-            Debug.Log("✅ Porte ouverte !");
-            
+            Debug.Log("Porte ouverte !");
             OnPorteOuverte();
         }
         else
         {
-            Debug.Log("🔒 Porte encore fermée");
-
+            Debug.Log("Porte encore fermée");
         }
     }
 
+    // normalise un angle entre 0 et 360
     private float NormalizeAngle(float angle)
     {
         angle %= 360f;
@@ -55,10 +52,19 @@ public class PorteSymboleManager : MonoBehaviour
         return angle;
     }
 
+    // actions à effectuer lorsque la porte est ouverte
     private void OnPorteOuverte()
     {
         PlayerPrefs.SetInt("PorteSymboleOuverte", 1);
-        SceneManager.LoadScene("Escape Game");
 
+        // jouer le son si disponible
+        if (doorSound != null && audioSource != null)
+        {
+            audioSource.clip = doorSound;
+            audioSource.Play();
+        }
+
+        // passer à la scène suivante
+        SceneManager.LoadScene("Escape Game");
     }
 }

@@ -1,32 +1,29 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerInteractor : MonoBehaviour
 {
-    [Header("Raycast settings")]
-    public Camera playerCamera;       // Cam�ra du joueur
-    public float interactDistance = 3f; // Distance max pour interagir
+    [SerializeField] private Camera playerCamera;   // caméra utilisée pour le raycast
+    [SerializeField] private float interactDistance = 3f; // distance max pour interagir
 
     void Update()
     {
-        if (playerCamera == null)
-            return;
+        if (playerCamera == null) return;
 
+        // lance un raycast depuis la caméra vers l’avant
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, interactDistance))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
         {
-            // V�rifie si l�objet a un script Bell
+            // vérifie si l’objet touché a un script Bell
             Bell bell = hit.collider.GetComponent<Bell>();
             if (bell != null)
             {
-                // Clic gauche pour interagir
+                // clic gauche → sonner la cloche
                 if (Input.GetMouseButtonDown(0))
                 {
                     bell.Ring();
                 }
 
-                // Option : feedback visuel (changer la couleur, etc.)
+                // possibilité d’un feedback visuel si besoin
                 // Renderer rend = hit.collider.GetComponent<Renderer>();
                 // if (rend != null) rend.material.color = Color.yellow;
             }
